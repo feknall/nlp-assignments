@@ -41,7 +41,7 @@ class Similarity:
 
     def find_top_5_most_similar_birkbeck_wordnet(self, success_at: list):
         # total misspelled words: 13283
-        birkbeck_misspelled_words = self.birkbeck_words[:10]
+        birkbeck_misspelled_words = self.birkbeck_words
         with concurrent.futures.ProcessPoolExecutor(self.num_processes) as executor:
             futures = []
             for i in range(self.num_processes):
