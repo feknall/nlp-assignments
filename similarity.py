@@ -10,13 +10,13 @@ class Similarity:
     result_directory = 'result'
     birkbeck_words = None
     wordnet_words = None
-    num_processes = None
+    birkbeck_total_parts = None
 
-    def __init__(self, num_processes: int):
+    def __init__(self, birkbeck_total_parts: int):
         self.create_result_dir()
         self.birkbeck_words = Birkbeck().get_words()
         self.wordnet_words = wordnet.get_wordnet_words()
-        self.num_processes = num_processes
+        self.birkbeck_total_parts = birkbeck_total_parts
 
     def calculate_distance_matrix(self, word: str, word_list: list) -> list:
         output = list()
@@ -39,13 +39,13 @@ class Similarity:
             output[word] = self.find_top_k_most_similar_in_wordnet(5, word, success_at)
         return output
 
-    def find_top_5_most_similar_birkbeck_wordnet(self, success_at: list):
+    def find_top_5_most_similar_birkbeck_wordnet_multiprocessing(self, success_at: list):
         # total misspelled words: 13283
         birkbeck_misspelled_words = self.birkbeck_words
-        with concurrent.futures.ProcessPoolExecutor(self.num_processes) as executor:
+        with concurrent.futures.ProcessPoolExecutor(self.birkbeck_total_parts) as executor:
             futures = []
-            for i in range(self.num_processes):
-                page_size = int(len(birkbeck_misspelled_words) / self.num_processes)
+            for i in range(self.birkbeck_total_parts):
+                page_size = int(len(birkbeck_misspelled_words) / self.birkbeck_total_parts)
                 sublist = birkbeck_misspelled_words[i * page_size: (i + 1) * page_size]
                 print(f"starting process {i}")
                 futures.append(executor.submit(self.find_top_5_most_similar_in_wordnet, sublist, success_at))
@@ -55,9 +55,18 @@ class Similarity:
                     pickle.dump(return_value, handle, protocol=pickle.HIGHEST_PROTOCOL)
                     print(f"process {index} is completed")
 
+    def find_top_5_most_similar_birkbeck_wordnet_single_process(self, birkbeck_page: int, success_at: list):
+        # total misspelled words: 13283
+        page_size = int(len(self.birkbeck_words) / self.birkbeck_total_parts)
+        sublist = self.birkbeck_words[birkbeck_page * page_size: (birkbeck_page + 1) * page_size]
+        return_value = self.find_top_5_most_similar_in_wordnet(sublist, success_at)
+        with open(f'./{self.result_directory}/result-{birkbeck_page}', 'wb') as handle:
+            pickle.dump(return_value, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            print(f"page {birkbeck_page} is completed")
+
     def load_data(self):
         output = dict()
-        for i in range(self.num_processes):
+        for i in range(self.birkbeck_total_parts):
             with open(f'./{self.result_directory}/result-{i}', 'rb') as handle:
                 output = {**output, **pickle.load(handle)}
         return output
