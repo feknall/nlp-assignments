@@ -8,6 +8,6 @@ if __name__ == '__main__':
     if (len(sys.argv)) >= 3:
         birkbeck_page = int(sys.argv[2])
     similarity = Similarity(birkbeck_total_parts)
-    similarity.find_top_5_most_similar_birkbeck_wordnet_single_process(birkbeck_page, [1, 5, 10])
-    # similarity.load_data()
+    similarity.find_top_5_most_similar_birkbeck_wordnet_single_process(birkbeck_page)
+    output = similarity.load_data(0, 102)
     print("Done")
