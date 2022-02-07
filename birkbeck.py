@@ -13,6 +13,9 @@ class Birkbeck:
         self.misspelled_words = [t[0] for t in self.words]
         self.correct_words = [t[1] for t in self.words]
 
+    def get_words(self) -> list:
+        return self.words
+
     def get_misspelled_words(self) -> list:
         return self.misspelled_words
 
@@ -29,6 +32,7 @@ class Birkbeck:
                 continue
             valid_lines.append((split[0], split[1]))
         return valid_lines
+
 
 
 if __name__ == '__main__':

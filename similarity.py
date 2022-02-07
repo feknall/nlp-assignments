@@ -10,7 +10,7 @@ class Similarity:
     result_directory = 'result'
     birkbeck_words = None
     wordnet_words = None
-    birkbeck_total_parts = None
+    birkbeck_total_parts = 1000
 
     def __init__(self, birkbeck_total_parts: int):
         self.create_result_dir()
@@ -18,20 +18,17 @@ class Similarity:
         self.wordnet_words = wordnet.get_wordnet_words()
         self.birkbeck_total_parts = birkbeck_total_parts
 
+    def __int__(self):
+        self.create_result_dir()
+        self.birkbeck_words = Birkbeck().get_misspelled_words()
+        self.wordnet_words = wordnet.get_wordnet_words()
+
     def calculate_distance_matrix(self, word: str, word_list: list) -> list:
         output = list()
         for inner_word in word_list:
             output.append((inner_word, distance.get_distance(word, inner_word)))
         output = sorted(output, key=lambda tup: tup[1])
         return output
-
-    # def find_top_k_most_similar_in_wordnet(self, k: int, word: str, success_at: list) -> dict:
-    #     similar = self.calculate_distance_matrix(word, self.wordnet_words)
-    #     output = dict()
-    #     for i in success_at:
-    #         filtered_similar = filter(lambda tup: tup[1] <= i, similar)
-    #         output[i] = list(filtered_similar)[:k]
-    #     return output
 
     def find_top_10_most_similar_in_wordnet(self, list_1: list) -> dict:
         output = dict()
@@ -68,7 +65,8 @@ class Similarity:
         output = dict()
         for i in range(begin, end + 1):
             with open(f'./{self.result_directory}/result-{i}', 'rb') as handle:
-                output = {**output, **pickle.load(handle)}
+                new = pickle.load(handle)
+                output = {**output, **new}
         return output
 
     def create_result_dir(self):
