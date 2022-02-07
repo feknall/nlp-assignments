@@ -1,5 +1,6 @@
 from similarity import Similarity
 import sys
+
 if __name__ == '__main__':
     birkbeck_total_parts = 10000
     birkbeck_page = 0
@@ -8,6 +9,5 @@ if __name__ == '__main__':
     if (len(sys.argv)) >= 3:
         birkbeck_page = int(sys.argv[2])
     similarity = Similarity(birkbeck_total_parts)
-    similarity.find_top_5_most_similar_birkbeck_wordnet_single_process(birkbeck_page)
-    output = similarity.load_data(0, 102)
+    similarity.find_top_10_most_similar_birkbeck_wordnet_single_process(birkbeck_page)
     print("Done")
