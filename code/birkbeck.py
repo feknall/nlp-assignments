@@ -23,7 +23,7 @@ class Birkbeck:
         return self.correct_words
 
     def read_list_of_misspelled_words(self) -> list:
-        with open('./data/EXAMSDAT.643') as f:
+        with open('data/EXAMSDAT.643') as f:
             lines = f.readlines()
         valid_lines = list()
         for line in lines:
